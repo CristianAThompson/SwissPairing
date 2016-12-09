@@ -29,7 +29,7 @@ def deletePlayers():
     c = conn.cursor()
     c.execute("DROP TABLE IF EXISTS players CASCADE;")
     conn.commit()
-    c.execute('CREATE TABLE players(player_id serial primary key, name text, \
+    c.execute('CREATE TABLE Players(player_id serial primary key, name text, \
                 wins integer, matches integer);')
     conn.commit()
     conn.close()
@@ -39,7 +39,7 @@ def countPlayers():
     """Returns the number of players currently registered."""
     conn = connect()
     c = conn.cursor()
-    c.execute("SELECT * from players;")
+    c.execute("SELECT * from Players;")
     count = c.rowcount;
     print count
     conn.close()
@@ -144,12 +144,6 @@ def swissPairings():
     """
     conn = connect()
     c = conn.cursor()
-    # c.execute("SELECT one.player_id, one.name, two.player_id, two.name \
-    #             FROM Players AS one LEFT JOIN Players AS two ON \
-    #             (one.player_id, one.name) != (two.player_id, two.name);")
-    # pair = c.fetchall()
-    # for row in pair:
-    #     print row
     c.execute("SELECT player_id, name, wins FROM Players ORDER BY wins;")
     results = c.fetchall()
     matched = []

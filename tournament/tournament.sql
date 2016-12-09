@@ -7,10 +7,11 @@
 -- these lines here.
 
 DROP DATABASE IF EXISTS tournament;
+DROP TABLE Players;
+DROP TABLE Matches;
 create database tournament;
-DROP TABLE IF EXISTS Players;
-CREATE TABLE players(player_id serial primary key, name text, wins integer, matches integer);
-DROP TABLE IF EXISTS Matches;
-CREATE TABLE matches(first_player_id integer references Players(player_id),
+SET DATABASE tournament;
+CREATE TABLE Players(player_id serial primary key, name text, wins integer, matches integer);
+CREATE TABLE Matches(first_player_id integer references Players(player_id),
                     second_player_id integer references Players(player_id),
                     winner integer);
