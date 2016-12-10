@@ -20,7 +20,7 @@ Click [here](https://github.com/CristianAThompson/SwissPairing/archive/master.zi
 6. After having run `cd ..` two times we should have the line `vagrant@vagrant-ubuntu-trusty-32:/$` instead, once here we will type in `cd vagrant/tournament` to navigate to the folder with the tournament files.
 7. Once we've run that command it should say `vagrant@vagrant-ubuntu-trusty-32:/vagrant/tournament$` once here we need to run the sql file to create the database and tables for the tournament.
 8. To create the database we will type `psql`
-9. You'll know you're inside psql when it says `vagrant=>` we will then type `\i tournament.sql` which will create the database after which we will type `\c tournament` and run `\i tournament.sql` again and it will create all the tables needed. After it runs type `\q` to leave psql
+9. You'll know you're inside psql when it says `vagrant=>` we will then type `\i tournamentdb.sql` which will create the database after which we will type `\c tournament` and run `\i tournamenttables.sql` again and it will create all the tables needed. After it runs type `\q` to leave psql
 10. Finally to run the tournament_test file we will type `python tournament_test.py`
 11. To exit Vagrant after the test simply type `logout`
 12. To stop Vagrant running in the background when done type `vagrant halt`

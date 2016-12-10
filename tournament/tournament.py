@@ -12,7 +12,10 @@ def connect():
 
 
 def deleteMatches():
-    """Remove all the match records from the database."""
+    """Remove all the match records from the database.
+
+        Select all players then for each player row update the quantity of win
+        and match records to 0."""
     conn = connect()
     c = conn.cursor()
     c.execute("SELECT * from Players;")
@@ -24,10 +27,13 @@ def deleteMatches():
     conn.close()
 
 def deletePlayers():
-    """Remove all the player records from the database."""
+    """Remove all the player records from the database.
+
+        First Remove the current Players table then recreate the empty
+        Players table with id, name, wins, and matches defined"""
     conn = connect()
     c = conn.cursor()
-    c.execute("DROP TABLE IF EXISTS players CASCADE;")
+    c.execute("DROP TABLE IF EXISTS Players CASCADE;")
     conn.commit()
     c.execute('CREATE TABLE Players(player_id serial primary key, name text, \
                 wins integer, matches integer);')
@@ -36,12 +42,14 @@ def deletePlayers():
 
 
 def countPlayers():
-    """Returns the number of players currently registered."""
+    """Returns the number of players currently registered.
+
+            Select all player rows and retun the count of the total
+            number rows"""
     conn = connect()
     c = conn.cursor()
     c.execute("SELECT * from Players;")
     count = c.rowcount;
-    print count
     conn.close()
     return count
 
@@ -49,12 +57,9 @@ def countPlayers():
 def registerPlayer(name):
     """Adds a player to the tournament database.
 
-    The database assigns a unique serial id number for the player.  (This
-    should be handled by your SQL database schema, not in your Python code.)
-
-    Args:
-      name: the player's full name (need not be unique).
-    """
+        Inserts a new row into the Players table with name passed in and
+        0 wins and 0 matches, player_id is automatically generated as a
+        serial"""
     conn = connect()
     c = conn.cursor()
     c.execute("insert into Players (name, wins, matches) values (%s, 0, 0)", (name,))
@@ -65,16 +70,13 @@ def registerPlayer(name):
 def playerStandings():
     """Returns a list of the players and their win records, sorted by wins.
 
-    The first entry in the list should be the player in first place, or a
-    player tied for first place if there is currently a tie.
+        Creates a playerStanding list object and then fetches all player rows
+        for each player row if the index is present append the value to
+        a blank list object called eachPlayer, for index 2 wins and index 3
+        matches, if it returns No Value or None append the integer 0 instead
 
-    Returns:
-      A list of tuples, each of which contains (id, name, wins, matches):
-        id: the player's unique id (assigned by the database)
-        name: the player's full name (as registered)
-        wins: the number of matches the player has won
-        matches: the number of matches the player has played
-    """
+        After each index has been appended to eachPlayer append that list
+        list object to the playerStanding list as a tuple"""
     playerStanding = []
     conn = connect()
     c = conn.cursor()
@@ -103,10 +105,10 @@ def playerStandings():
 def reportMatch(winner, loser):
     """Records the outcome of a single match between two players.
 
-    Args:
-      winner:  the id number of the player who won
-      loser:  the id number of the player who lost
-    """
+        Update the value of wins to be current wins + 1 and increment matches
+        by 1 as well for the passed in winner, then update the value of
+        wins to be current wins - 1 and increment matches by 1 for the passed
+        in loser"""
 
     conn = connect()
     c = conn.cursor()
@@ -116,7 +118,6 @@ def reportMatch(winner, loser):
     winner = c.fetchone()
     conn.commit()
     print winner
-    # c.execute("UPDATE Players SET wins = wins - 1 WHERE player_id = %s;" % loser)
     c.execute("UPDATE Players SET matches = matches + 1 WHERE player_id = %s;" % loser)
     c.execute("SELECT * from Players WHERE player_id = %s;" % loser)
     loser = c.fetchone()
@@ -130,17 +131,17 @@ def reportMatch(winner, loser):
 def swissPairings():
     """Returns a list of pairs of players for the next round of a match.
 
-    Assuming that there are an even number of players registered, each player
-    appears exactly once in the pairings.  Each player is paired with another
-    player with an equal or nearly-equal win record, that is, a player adjacent
-    to him or her in the standings.
+        First retrieves all the player_id, name, and wins from Players table
+        then get the length of the returned results and create an empty list
+        matched, then for each result from the length 0 to the end of the
+        returned results - 1 step each iteration by 2.
+        Assign the First result index 0(player_id) and first result index
+        1(name) and second result index 0(player_id) and second result
+        index 1(name) to paired and append paired to the matched list object
+        then increment by 2 and return the results index i index 0 and so
+        on until the length of the passed in Players query is reached.
 
-    Returns:
-      A list of tuples, each of which contains (id1, name1, id2, name2)
-        id1: the first player's unique id
-        name1: the first player's name
-        id2: the second player's unique id
-        name2: the second player's name
+        return the matched list of (player_id, name, player_id, name) objects
     """
     conn = connect()
     c = conn.cursor()
@@ -171,6 +172,6 @@ def swissPairings():
 # reportMatch(id1, id2)
 # reportMatch(id3, id4)
 # print playerStandings()
-print swissPairings()
+# print swissPairings()
 # deletePlayers()
 # countPlayers()
